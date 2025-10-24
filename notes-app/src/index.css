@@ -1,13 +1,182 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=DynaPuff:wght@400..700&family=Kaushan+Script&family=Yellowtail&display=swap');
+
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "DynaPuff", system-ui;
+  text-decoration: none;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  background: #F7F6EB;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 2em;
+  border-bottom: 4px solid #854D27;
+  margin: 0 2%;
+}
+
+nav .action{
+  flex: 3;
+}
+
+nav .action button {
+  font-family: "Kaushan Script", cursive;
+  background-color: #ECA400;
+  color: #f4f0e4;
+  border: 2px solid #ECA400;
+  border-radius: 20px;
+  padding: 0.5em 1em;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-left: 75%;
+  margin-right: 0.5rem;
+  width: 6rem;
+  transition: 200ms;
+}
+
+nav .action button:hover{
+  background-color: #f4f0e4;
+  color: #ECA400;
+  border: 2px solid #ECA400;
+}
+
+.headline {
+  text-align: center;
+  font-family: 'Yellowtail';
+  font-weight: 100;
+  font-size: 2.3rem;
+}
+.headline span {
+  color: #ECA400;
+  font-family: 'Yellowtail';
+  font-weight: 900;
+}
+
+.add-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 0 0 0.4rem 0;
+  font-size: 4rem;
+  background: linear-gradient(#ff9a00, #cd8e00);
+  color: #ffffff;
+  border: 5px solid #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: "Acme", sans-serif;
+  width: 3.6rem;
+  line-height: 3rem;
+  transition: 200ms;
+}
+.add-button:hover{
+  opacity: 0.8;
+}
+
+.note-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 2rem;
+  font-family: "Acme", sans-serif;
+}
+
+.note-form textarea, 
+.note-form input,
+.note-form button {
+  font-family: "Acme", sans-serif;
+  width: 55%;
+  padding: 1em;
+  font-size: 1em;
+  border: none;
+  border-radius: 18px;
+  background-color: #fff;
+  outline: 2px solid #ae9c74;
+  letter-spacing: 1px;
+}
+
+.note-form textarea{
+  field-sizing: content;
+  min-height: 20vh;
+}
+
+.note-form button {
+  background: linear-gradient(#ff9a00, #cd8e00);
+  width: 20%;
+  outline: none;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  letter-spacing: 0px;
+  cursor: pointer;
+  transition: 200ms;
+}
+
+.note-form button:hover{
+  opacity: 0.8;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+  margin: 2rem 0;
+  margin-bottom: 5rem;
+  
+}
+
+.note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  background-color: #fff;
+  padding: 0.5em 1em;
+  width: 20%;
+  min-height: 135px;
+  margin: 1em;
+  box-shadow: 0px 6px 5px rgba(23, 33, 33, 0.25);
+  border-radius: 10px;
+}
+
+.noteCard .title,
+.note-details .title {
+  color: #f5400f;
+  display: flex;
+  justify-content: space-between;
+  text-transform: capitalize;
+}
+
+.noteCard .details,
+.note-details .details {
+  color: #333;
+}
+
+.container {
+  padding: 1em;
+}
+
+.note-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5em;
+  background-color: #fff;
+  margin: 0 auto;
+  margin-top: 5em;
+  padding: 1em;
+  max-width: 700px;
+}
+
+.note-details .action {
+  display: flex;
+  justify-content: space-around;
+  width: 300px;
 }
