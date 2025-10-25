@@ -8,13 +8,14 @@ export default function NoteDetails() {
     const [note, setNote] = useState({
         id: "",
         title: "",
-        details: "",
+        content: "",
     });
+    console.log(id);
     useEffect(() => {
         axios
-            .get(`https://mern-notes-backend-5z2j.onrender.com/noteDetails/${id}`)
+            .get(`/api/notes/${id}`)
             .then((res) => {
-                setNote(res.data.content);
+                setNote(res.data);
             })
             .catch((err) => console.log(err));
     }, [id]);

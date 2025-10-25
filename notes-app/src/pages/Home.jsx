@@ -12,9 +12,10 @@ export default function Home() {
             axios
                 .get("/api/notes")
                 .then((res) => {
-                    if (res.data.content) {
-                        console.log(res.data)
-                        setNotes(res.data.content);
+                console.log(res);
+                    if (res.data) {
+                        console.log(res.data);
+                        setNotes(res.data);
                     } else {
                         setNotes([]);
                     }
@@ -31,6 +32,11 @@ export default function Home() {
     useEffect(() => {
         fetchNotes();
     }, []);
+
+    useEffect(() => {
+        fetchNotes();
+    }, [display]);
+
     return (
         <div>
             <div className="cards">

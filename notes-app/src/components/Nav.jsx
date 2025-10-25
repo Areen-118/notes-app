@@ -30,7 +30,7 @@ const H3 = styled.h3`
   font-size: 1.1rem;
   font-family: "Kaushan Script", cursive;
 `;
-const NavItem= styled.a`
+const NavItem= styled.div`
   flex: 1;
 
   &:hover {
