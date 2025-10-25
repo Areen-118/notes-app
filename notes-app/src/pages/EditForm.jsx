@@ -7,13 +7,13 @@ export default function EditForm() {
     const { id } = useParams();
     const [note, setNote] = useState({
         title: '',
-        details: '',
+        content: '',
     });
     useEffect(() => {
         axios
-            .get(`https://mern-notes-backend-5z2j.onrender.com/noteDetails/${id}`)
+            .get(`/api/notes/${id}`)
             .then((res) => {
-                setNote(res.data.content);
+                setNote(res.data);
             })
             .catch((err) => console.log(err));
     }, [id]);
@@ -26,7 +26,7 @@ export default function EditForm() {
     const submitHandler = (event) => {
         event.preventDefault();
         axios
-            .patch(`https://mern-notes-backend-5z2j.onrender.com/updateNote/${id}`, note)
+            .put(`/api/notes/${id}`, note)
             .then(() => {
                 navigate(`/details/${id}`);
                 Swal.fire('Your note has been updated successfully!')
@@ -47,9 +47,9 @@ export default function EditForm() {
                     placeholder="Title of Note ..."
                 />
                 <textarea
-                    name="details"
+                    name="content"
                     rows="5"
-                    defaultValue={note.details}
+                    defaultValue={note.content}
                     onChange={changeHandler}
                     placeholder="Descride Your Note ..."
                 ></textarea>

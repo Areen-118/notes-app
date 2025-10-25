@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import 'animate.css/animate.min.css';
 import styled from "styled-components";
@@ -12,18 +11,19 @@ export default function AddForm({display, click_display}) {
     });
 
     const changeHandler = (event) => {
-      const { name, value} = event.target;
+      const {name, value} = event.target;
       setNote( {...note, [name]: value});
     };
 
 
-    const navigate = useNavigate();
     const submitHandler = (event) => {
       event.preventDefault();
+      console.log(note);
       axios
         .post("/api/notes", note)
         .then(() => {
-          navigate('/');
+          
+          click_display();
           Swal.fire({
             title: 'Your note has been added successfully!',
             showClass: {
@@ -34,7 +34,7 @@ export default function AddForm({display, click_display}) {
             }
           })
         })
-        .catch((err) => {console.log(err.data);});
+        .catch((err) => {console.log(err);});
     };
     return (
         <Background>
@@ -53,7 +53,7 @@ export default function AddForm({display, click_display}) {
                       required
                   />
                   <textarea
-                      name="details"
+                      name="content"
                       rows="5"
                       defaultValue={note.content}
                       onChange={changeHandler}
