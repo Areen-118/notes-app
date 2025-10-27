@@ -38,7 +38,7 @@ nav .action button {
   cursor: pointer;
   margin-left: 75%;
   margin-right: 0.5rem;
-  width: 6rem;
+  width: 9rem;
   transition: 200ms;
 }
 
@@ -81,18 +81,19 @@ nav .action button:hover{
   opacity: 0.8;
 }
 
-.note-form {
+.note-form , .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   align-items: center;
-  margin-top: 2rem;
-  font-family: "Acme", sans-serif;
+  margin: 2rem 0;
 }
 
 .note-form textarea, 
 .note-form input,
-.note-form button {
+.note-form button,
+.login-form input,
+.login-form button {
   width: 55%;
   padding: 1em;
   font-size: 1em;
@@ -108,7 +109,9 @@ nav .action button:hover{
   min-height: 20vh;
 }
 
-.note-form button, .detail-button {
+.note-form button, 
+.detail-button, 
+.login-form button {
   background: linear-gradient(#ff9a00, #cd8e00);
   width: 20%;
   outline: none;
@@ -216,4 +219,13 @@ nav .action button:hover{
 .swal2-actions button:hover{
   opacity: 0.8;
 }
-  
+
+.inactive{
+  color: #bdac86 !important;
+  font-weight: 100 !important;
+  cursor: pointer;
+  transition: 200ms;
+}
+.inactive:hover{
+  color: #947b46 !important;
+}

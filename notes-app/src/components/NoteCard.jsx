@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export default function NoteCard({note}) {
-    console.log(note._id);
-    console.log(note.content.substring(0, 40))
     return (
         <div className="note-card">
             <H2 className="title">

@@ -6,25 +6,32 @@ import styled from "styled-components";
 
 export default function AddForm({display, click_display}) {
     const [note, setNote] = useState({
+        id: crypto.randomUUID(),
         title: "",
         content: "",
+        createdAt: Date.now(),
     });
+    const [error, setError] = useState("");
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
 
     const changeHandler = (event) => {
+      setError("");
       const {name, value} = event.target;
       setNote( {...note, [name]: value});
     };
 
-
-    const submitHandler = (event) => {
-      event.preventDefault();
-      console.log(note);
-      axios
-        .post("/api/notes", note)
-        .then(() => {
-          
-          click_display();
-          Swal.fire({
+    const saveNewNoteToLocal = (newNote) => {
+      const existing = JSON.parse(localStorage.getItem("notes")) || [];
+      let found = findNote(newNote, existing);
+      if(!found){
+        existing.push(newNote);
+        localStorage.setItem("notes", JSON.stringify(existing));
+      }
+    }
+    const showPopup = () =>{
+      click_display();
+      Swal.fire({
             title: 'Your note has been added successfully!',
             showClass: {
               popup: 'animate__animated animate__fadeInDown'
@@ -32,9 +39,30 @@ export default function AddForm({display, click_display}) {
             hideClass: {
               popup: 'animate__animated animate__fadeOutUp'
             }
-          })
+      });
+    }
+
+
+    const submitHandler = (event) => {
+      event.preventDefault();
+
+      if(!note.title.length || !note.content.length){
+            setError("Title or content cannot be empty!")
+            return ;
+      }
+      if(token.length){
+      axios
+        .post("/api/notes", note)
+        .then(() => {
+        saveNewNoteToLocal(note);
+        showPopup();
         })
         .catch((err) => {console.log(err);});
+      }
+      else{
+        saveNewNoteToLocal(note);
+        showPopup()
+      }
     };
     return (
         <Background>
@@ -43,6 +71,7 @@ export default function AddForm({display, click_display}) {
               <h1 className="headline">
                   Add <span>Note</span>
               </h1>
+
               <form className="note-form">
                   <input
                       type="text"
@@ -60,6 +89,7 @@ export default function AddForm({display, click_display}) {
                       placeholder="Descride Your Note ..."
                       required
                   ></textarea>
+                  {error.length > 0 ? <ErrorP className="animate__animated animate__shakeX">{error}</ErrorP>: null}
                   <button type="submit" onClick={submitHandler}>Save Note</button>
               </form>
             </Div>
@@ -100,3 +130,18 @@ const CloseButton = styled.button`
   margin-left: auto;
   display: block;
 `;
+
+const ErrorP = styled.p`
+  color: red;
+  font-size : 1.2rem;
+`
+
+function findNote(note, searchlist)
+{
+    let found = null;
+    searchlist.forEach(element => {
+        if(element.id === note.id)
+            found = element.id;
+    });
+    return found;
+}
