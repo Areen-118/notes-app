@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from "react";
 import NoteCard from "../components/NoteCard";
-import AddForm from "./AddForm";
+import AddForm from "../components/AddForm";
 import axios from "axios";
 import styled from "styled-components";
 
 export default function Home() {
     const [notes, setNotes] = useState([]);
     const [display, setDisplay] = useState(false);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
 
     const fetchNotes = () => {
+        if(token.length){
             axios
                 .get("/api/notes")
                 .then((res) => {
-                console.log(res);
-                    if (res.data) {
-                        console.log(res.data);
+                    console.log(res);
+                    if (res.data)
                         setNotes(res.data);
-                    } else {
-                        setNotes([]);
-                    }
                 })
                 .catch((err) => {
                     console.log(err);
                 });
+        }
+        else
+            setNotes(JSON.parse(localStorage.getItem("notes")) || []);
     };
 
     const display_add = function(){

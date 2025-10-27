@@ -1,8 +1,45 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
+import Swal from "sweetalert2";
 
 export default function Nav() {
-    
+  const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
+  const goToLogin= () =>{
+    navigate('/login');
+  }
+
+   useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const handleLogoutClick = () =>{
+    Swal.fire({
+            title: "Do you want to logout",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setToken("");
+                localStorage.setItem("token", "");
+                localStorage.setItem("user", "");
+                navigate("/");
+            } else {
+                return ;
+            }
+        });
+  }
+
   return (
     <nav>
       <NavItem>
@@ -18,8 +55,9 @@ export default function Nav() {
           <H2>NOTES APP</H2>
       </Logo>
       <div className="action">
-          {/*TODO:  make login button */}
-          <button>Login</button>
+        {(token && token.length)?
+        <button onClick={handleLogoutClick}>Logout</button>
+        :<button onClick={goToLogin}>Login/Register</button>} 
       </div>
     </nav>
   )
