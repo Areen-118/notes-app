@@ -29,4 +29,4 @@ Users can view, edit, or delete their notes at any time.
 
 A full-stack, efficient Notes App built using modern JavaScript technologies (MERN Stack), helping users manage their notes effectively.
 
- 
+   
