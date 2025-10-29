@@ -75,6 +75,7 @@ export default function EditForm() {
             Swal.fire('Your note has been updated successfully!');
         }
         //console.log(new Date(updatedNote.updatedAt).getTime());
+        
     }
   return (
     <div>

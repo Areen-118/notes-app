@@ -159,17 +159,18 @@ async function syncDbAndLocal(response, token, userId) {
       },
     });
     const dbNotes = res.data;
+    
 
     for (let note of existing) {
+      
       if(note.userId === userId)
       {
+        
         const dbNote = findNote(note, dbNotes);
 
-        const localTime = new Date(note.updatedAt).getTime();
-        const dbTime = new Date(dbNote.updatedAt).getTime();
-        console.log(note, dbNote);
-
         if (dbNote) {
+          let localTime = new Date(note.updatedAt).getTime();
+          const dbTime = new Date(dbNote.updatedAt).getTime();
           if (dbNote.deleted && note.deleted) continue;
 
           if (note.deleted && !dbNote.deleted) {
@@ -184,11 +185,11 @@ async function syncDbAndLocal(response, token, userId) {
             continue;
           }
 
-          if (localTime > dbTime) {
+          if (dbTime && localTime && localTime > dbTime) {
             await axios.put(`/api/notes/${note._id}`, note ,
               {headers: {Authorization: `Bearer ${token}`,},});
           } 
-          else if (dbTime > localTime) {
+          else if (dbTime && localTime && dbTime > localTime) {
             let index =  existing.findIndex(notetofind => notetofind._id === note._id);
             existing.splice(index, 1);
             existing.push(dbNote);
