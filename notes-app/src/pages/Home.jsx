@@ -4,28 +4,46 @@ import AddForm from "../components/AddForm";
 import axios from "axios";
 import styled from "styled-components";
 
+
 export default function Home() {
     const [notes, setNotes] = useState([]);
     const [display, setDisplay] = useState(false);
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
+    const token = localStorage.getItem("token") || "";
+    const userId = localStorage.getItem("userId") || null;
 
     const fetchNotes = () => {
         if(token.length){
             axios
-                .get("/api/notes")
+                .get("/api/notes", {headers: {Authorization: `Bearer ${token}`,},})
                 .then((res) => {
-                    console.log(res);
+                    //console.log(res);
                     if (res.data)
-                        setNotes(res.data);
+                    {
+                        res.data.forEach((note, i) => {
+                            if(note.deleted)
+                                res.data.splice(i, 1);
+                        });
+                        setNotes(res.data || []);
+                    }
+                        
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         }
         else
-            setNotes(JSON.parse(localStorage.getItem("notes")) || []);
+        {
+            let notesLocal = JSON.parse(localStorage.getItem("notes")) || [];
+            /*notesLocal.forEach((note, i) => {
+                if(note.deleted)
+                    notesLocal.splice(i, 1);
+            });*/
+            notesLocal = notesLocal.filter(note => !note.deleted);
+            setNotes(notesLocal);
+        }
+        
     };
+
 
     const display_add = function(){
         setDisplay(!display);
@@ -33,6 +51,11 @@ export default function Home() {
 
     useEffect(() => {
         fetchNotes();
+        const handleStorageChange = () => {
+            fetchNotes();
+        };
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
     }, []);
 
     useEffect(() => {
@@ -42,9 +65,9 @@ export default function Home() {
     return (
         <div>
             <div className="cards">
-                {notes && notes.length > 0 ? (
+                {notes.length > 0 ? (
                     notes.map((note) => (
-                        <NoteCard key={note._id} note={note} />
+                        (!note.deleted && note.userId === userId)?<NoteCard key={note._id} note={note} /> : null
                     ))
                 ) : (
                     <Para>No Notes To Show</Para>

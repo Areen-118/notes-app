@@ -3,17 +3,22 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 import 'animate.css/animate.min.css';
 import styled from "styled-components";
+import { findNote } from "../utils/noteUtils.js";
 
 export default function AddForm({display, click_display}) {
+    const [error, setError] = useState("");
+    const token = localStorage.getItem("token") || "";
+    const userId = localStorage.getItem("userId") || null;
     const [note, setNote] = useState({
-        id: crypto.randomUUID(),
+        _id: crypto.randomUUID(),
         title: "",
         content: "",
-        createdAt: Date.now(),
+        deleted: false,
+        updatedAt: Date.now(),
+        userId: userId
     });
-    const [error, setError] = useState("");
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
+    
+    const user = localStorage.getItem("user") || "";
 
     const changeHandler = (event) => {
       setError("");
@@ -52,10 +57,10 @@ export default function AddForm({display, click_display}) {
       }
       if(token.length){
       axios
-        .post("/api/notes", note)
+        .post("/api/notes", note ,{headers: {Authorization: `Bearer ${token}`,},})
         .then(() => {
-        saveNewNoteToLocal(note);
-        showPopup();
+          saveNewNoteToLocal(note);
+          showPopup();
         })
         .catch((err) => {console.log(err);});
       }
@@ -136,12 +141,3 @@ const ErrorP = styled.p`
   font-size : 1.2rem;
 `
 
-function findNote(note, searchlist)
-{
-    let found = null;
-    searchlist.forEach(element => {
-        if(element.id === note.id)
-            found = element.id;
-    });
-    return found;
-}

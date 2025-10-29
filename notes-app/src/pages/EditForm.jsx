@@ -4,22 +4,38 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import 'animate.css/animate.min.css';
 import styled from "styled-components";
+import { findNote } from "../utils/noteUtils.js";
 
 export default function EditForm() {
-    const { id } = useParams();
+    const { _id } = useParams();
+    const token = localStorage.getItem("token") || "";
+    const userId = localStorage.getItem("userId") || null;
+    let localNotes = JSON.parse(localStorage.getItem("notes")) || [];
+    
     const [note, setNote] = useState({
         title: '',
         content: '',
+        deleted: false,
+        updatedAt: Date.now(),
+        userId: userId
     });
     const [error, setError] = useState("");
     useEffect(() => {
-        axios
-            .get(`/api/notes/${id}`)
+        if(token.length){
+            axios
+            .get(`/api/notes/${_id}`, {headers: {Authorization: `Bearer ${token}`,},})
             .then((res) => {
                 setNote(res.data);
             })
             .catch((err) => console.log(err));
-    }, [id]);
+        }
+        else
+        {
+            let localNote = findNote(_id, localNotes);
+            setNote(localNote);
+        }
+        
+    }, [_id]);
     const changeHandler = (event) => {
         setError("");
         const {name, value} = event.target;
@@ -33,13 +49,32 @@ export default function EditForm() {
             setError("Title or content cannot be empty!")
             return ;
         }
-        axios
-            .put(`/api/notes/${id}`, note)
+        const updatedNote = { ...note, updatedAt: Date.now() };
+        setNote(updatedNote);
+        if(token.length){
+            axios
+            .put(`/api/notes/${_id}`, updatedNote ,
+                {headers: {Authorization: `Bearer ${token}`,},})
             .then(() => {
-                navigate(`/details/${id}`);
-                Swal.fire('Your note has been updated successfully!')
+                let index =  localNotes.findIndex(notetofind => notetofind._id === updatedNote._id);
+                localNotes.splice(index, 1);
+                localNotes.push(updatedNote);
+                localStorage.setItem("notes", JSON.stringify(localNotes));
+                navigate(`/details/${_id}`);
+                Swal.fire('Your note has been updated successfully!');
             })
             .catch((err) => console.error(err));
+        }
+        else
+        {    
+            let index =  localNotes.findIndex(notetofind => notetofind._id === updatedNote._id);
+            localNotes.splice(index, 1);
+            localNotes.push(updatedNote);
+            localStorage.setItem("notes", JSON.stringify(localNotes));
+            navigate(`/details/${_id}`);
+            Swal.fire('Your note has been updated successfully!');
+        }
+        //console.log(new Date(updatedNote.updatedAt).getTime());
     }
   return (
     <div>
