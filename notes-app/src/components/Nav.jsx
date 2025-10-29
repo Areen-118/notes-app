@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 export default function Nav() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   const goToLogin= () =>{
     navigate('/login');
@@ -14,12 +14,12 @@ export default function Nav() {
 
    useEffect(() => {
     const handleStorageChange = () => {
-      setToken(localStorage.getItem("token"));
+      setToken(localStorage.getItem("token") || "");
     };
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+    }, []);
 
   const handleLogoutClick = () =>{
     Swal.fire({
@@ -33,6 +33,7 @@ export default function Nav() {
                 setToken("");
                 localStorage.setItem("token", "");
                 localStorage.setItem("user", "");
+                window.dispatchEvent(new Event("storage"));
                 navigate("/");
             } else {
                 return ;
@@ -55,7 +56,7 @@ export default function Nav() {
           <H2>NOTES APP</H2>
       </Logo>
       <div className="action">
-        {(token && token.length)?
+        {token.length?
         <button onClick={handleLogoutClick}>Logout</button>
         :<button onClick={goToLogin}>Login/Register</button>} 
       </div>

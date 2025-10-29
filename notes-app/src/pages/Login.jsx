@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import 'animate.css/animate.min.css';
 import styled from "styled-components";
 import {useNavigate} from 'react-router-dom';
+import { findNote } from "../utils/noteUtils.js";
 
 export default function Login({display, click_display}) {
     const [user, setUser] = useState({
@@ -133,39 +134,77 @@ const ErrorP = styled.p`
   color: red;
   font-size : 1.2rem;
 `
-function syncDbAndLocal(response){
-        const existing = JSON.parse(localStorage.getItem("notes")) || [];
-        axios.get("/api/notes", response.userId).then( (res) => {
-            existing.forEach(note => {
-                let dbNote = findNote(note , res.data);
-                if(dbNote)
-                {
-                    if(dbNote.title !== note.title || dbNote.content !== note.content)
-                    {
-                        axios.put(`/api/notes/${dbNote.id}`, note)
-                        .catch((err) => (console.log(err)));
-                    }
-                }
-                else
-                {
-                    axios.post(`/api/notes/`, note)
-                    .catch((err) => (console.log(err)));
-                }
-                
-            });
-        }).catch((err) => (console.log(err)));
 
-}
+async function syncDbAndLocal(response) {
+  const existing = JSON.parse(localStorage.getItem("notes")) || [];
+  console.log("are you here??");
 
+  try {
+    //const res = await axios.get(`/api/notes?userId=${response.userId}`);
+    const res = await axios.get(`/api/notes`);
+    const dbNotes = res.data;
 
-function findNote(note, searchlist)
-{
-    let found = null;
-    searchlist.forEach(element => {
-        if(element.id === note.id)
-            found = element.id;
+    for (let note of existing) {
+      const dbNote = findNote(note, dbNotes);
+
+      if (dbNote) {
+        if (dbNote.deleted && note.deleted) continue;
+
+        if (note.deleted && !dbNote.deleted) {
+          await axios.put(`/api/notes/${note._id}`, note);
+          continue;
+        }
+
+        if (dbNote.deleted && !note.deleted) {
+          let index =  existing.findIndex(notetofind => notetofind._id === note._id);
+          existing.splice(index, 1);
+          continue;
+        }
+
+        if (note.updatedAt > dbNote.updatedAt) {
+          await axios.put(`/api/notes/${note._id}`, note);
+        } 
+        else if (dbNote.updatedAt > note.updatedAt) {
+          let index =  existing.findIndex(notetofind => notetofind._id === note._id);
+          existing.splice(index, 1);
+          existing.push(dbNote);
+        }
+      }
+
+      else if (!dbNote && !note.deleted) {
+        await axios.post(`/api/notes`, note);
+      }
+      else if(!dbNote && note.deleted)
+      {
+        let index =  existing.findIndex(notetofind => notetofind._id === note._id);
+        existing.splice(index, 1);
+      }
+    }
+
+    const Month = 30 * 24 * 60 * 60 * 1000;
+
+    dbNotes.forEach(async (dbNote) => {
+        const localNote = findNote(dbNote, existing);
+        if (!localNote && !dbNote.deleted) existing.push(dbNote);
+        if(localNote && dbNote.deleted){
+            let index =  existing.findIndex(notetofind => notetofind._id === dbNote._id);
+            existing.splice(index, 1);
+        }
+        if (dbNote.deleted && Date.now() - new Date(dbNote.updatedAt).getTime() > Month) {
+            try {
+                await axios.delete(`/api/notes/${dbNote._id}`);
+                let index =  existing.findIndex(notetofind => notetofind._id === dbNote._id);
+                existing.splice(index, 1);
+            } catch (err) {
+              console.error("Failed to hard-delete note:", dbNote, err);
+            }
+        }
     });
-    return found;
+
+    localStorage.setItem("notes", JSON.stringify(existing));
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 

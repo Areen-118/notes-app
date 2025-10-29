@@ -4,22 +4,33 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import 'animate.css/animate.min.css';
 import styled from "styled-components";
+import { findNote } from "../utils/noteUtils.js";
 
 export default function EditForm() {
-    const { id } = useParams();
+    const { _id } = useParams();
+    const token = localStorage.getItem("token") || "";
+    let localNotes = JSON.parse(localStorage.getItem("notes")) || [];
+    let localNote = findNote(note, localNotes);
     const [note, setNote] = useState({
         title: '',
         content: '',
+        deleted: false,
+        updatedAt: Date.now(),
     });
     const [error, setError] = useState("");
     useEffect(() => {
-        axios
-            .get(`/api/notes/${id}`)
+        if(token.length){
+            axios
+            .get(`/api/notes/${_id}`)
             .then((res) => {
                 setNote(res.data);
             })
             .catch((err) => console.log(err));
-    }, [id]);
+        }
+        else
+            setNote(localNote);
+        
+    }, [_id]);
     const changeHandler = (event) => {
         setError("");
         const {name, value} = event.target;
@@ -33,13 +44,20 @@ export default function EditForm() {
             setError("Title or content cannot be empty!")
             return ;
         }
-        axios
-            .put(`/api/notes/${id}`, note)
+        setNote({ ...note, updatedAt: Date.now() });
+        if(token.length){
+            axios
+            .put(`/api/notes/${_id}`, note)
             .then(() => {
-                navigate(`/details/${id}`);
+                navigate(`/details/${_id}`);
                 Swal.fire('Your note has been updated successfully!')
             })
             .catch((err) => console.error(err));
+        }
+        let index =  localNotes.findIndex(notetofind => notetofind._id === note._id);
+        localNotes.splice(index, 1);
+        localNotes.push(note);
+        localStorage.setItem("notes", JSON.stringify(localNotes));
     }
   return (
     <div>

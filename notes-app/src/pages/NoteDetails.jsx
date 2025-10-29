@@ -2,23 +2,33 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailCard from "../components/DetailCard";
+import { findNote } from "../utils/noteUtils";
 
 export default function NoteDetails() {
-    const { id } = useParams();
+    const { _id } = useParams();
     const [note, setNote] = useState({
-        id: "",
+        _id: "",
         title: "",
         content: "",
     });
-    console.log(id);
+    const token = localStorage.getItem("token") || "";
+    const existing = JSON.parse(localStorage.getItem("notes")) || [];
     useEffect(() => {
-        axios
-            .get(`/api/notes/${id}`)
+        if(token.length)
+        {
+            axios
+            .get(`/api/notes/${_id}`)
             .then((res) => {
                 setNote(res.data);
             })
             .catch((err) => console.log(err));
-    }, [id]);
+        }
+        else
+        {
+            setNote(findNote(_id, existing));
+        }
+        console.log(note);
+    }, [_id]);
     return (
         <div className="container">
             <DetailCard note={note} />
