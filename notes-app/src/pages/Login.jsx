@@ -58,7 +58,7 @@ export default function Login({display, click_display}) {
             else
             {
               toggleType();
-              localStorage.setItem(`${user.email}`, user);
+              localStorage.setItem(`${user.email}`, JSON.stringify(user));
             }
 
             Swal.fire({
