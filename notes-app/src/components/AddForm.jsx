@@ -6,15 +6,18 @@ import styled from "styled-components";
 import { findNote } from "../utils/noteUtils.js";
 
 export default function AddForm({display, click_display}) {
+    const [error, setError] = useState("");
+    const token = localStorage.getItem("token") || "";
+    const userId = localStorage.getItem("userId") || null;
     const [note, setNote] = useState({
         _id: crypto.randomUUID(),
         title: "",
         content: "",
         deleted: false,
         updatedAt: Date.now(),
+        userId: userId
     });
-    const [error, setError] = useState("");
-    const token = localStorage.getItem("token") || "";
+    
     const user = localStorage.getItem("user") || "";
 
     const changeHandler = (event) => {
@@ -54,7 +57,7 @@ export default function AddForm({display, click_display}) {
       }
       if(token.length){
       axios
-        .post("/api/notes", note)
+        .post("/api/notes", note ,{headers: {Authorization: `Bearer ${token}`,},})
         .then(() => {
           saveNewNoteToLocal(note);
           showPopup();

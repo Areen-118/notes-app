@@ -17,7 +17,7 @@ export default function NoteDetails() {
         if(token.length)
         {
             axios
-            .get(`/api/notes/${_id}`)
+            .get(`/api/notes/${_id}`, {headers: {Authorization: `Bearer ${token}`,},})
             .then((res) => {
                 setNote(res.data);
             })

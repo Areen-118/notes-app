@@ -24,5 +24,6 @@ mongoose
   .catch((err) => console.error("MongoDB error:", err));
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/notes", verifyToken, noteRoutes);
+//app.use("/api/notes", verifyToken, noteRoutes);
+app.use("/api/notes", noteRoutes);
 

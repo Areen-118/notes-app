@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import NoteDetails from "./pages/NoteDetails";
 import EditForm from "./pages/EditForm";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
 
 function App() {
@@ -16,8 +17,7 @@ function App() {
                     <Route path={"/details/:_id"} element={<NoteDetails />} />
                     <Route path={"/edit/:_id"} element={<EditForm />} />
                     <Route path={"/login"} element={<Login />} />
-                    {/* TODO: <Route path={"/tags"} element={<Tags />} /> */}
-                    {/* <Route path={"/profile"} element={<Profile />} /> */}
+                    <Route path={"/profile"} element={<Profile />} />
                 </Routes>
             </Router>
         </>

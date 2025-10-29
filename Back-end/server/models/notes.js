@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const noteSchema = new mongoose.Schema({
+  _id: { 
+    type: String, 
+    required: true 
+  },
   title: {
     type: String,
     required: true,
@@ -13,11 +17,15 @@ const noteSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    //required: true,
   },
-  createdAt: {
+  updatedAt: {
     type: Date,
     default: Date.now,
+  },
+  deleted:{
+    type: Boolean,
+    default: false,
   },
 });
 

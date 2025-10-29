@@ -24,7 +24,7 @@ export default function DetailCard({ note }) {
                     console.log(note);
                     note.deleted = true;
                     axios
-                    .put(`/api/notes/${note._id}`, note)
+                    .put(`/api/notes/${note._id}`, note , {headers: {Authorization: `Bearer ${token}`,},})
                     .then(() => {
                         let oldNote = findNote(note, existing);
                         if(oldNote)

@@ -4,19 +4,19 @@ import AddForm from "../components/AddForm";
 import axios from "axios";
 import styled from "styled-components";
 
+
 export default function Home() {
     const [notes, setNotes] = useState([]);
     const [display, setDisplay] = useState(false);
     const token = localStorage.getItem("token") || "";
-    const user = localStorage.getItem("user") || "";
-    //console.log(notes);
+    const userId = localStorage.getItem("userId") || null;
 
     const fetchNotes = () => {
         if(token.length){
             axios
-                .get("/api/notes")
+                .get("/api/notes", {headers: {Authorization: `Bearer ${token}`,},})
                 .then((res) => {
-                    console.log(res);
+                    //console.log(res);
                     if (res.data)
                     {
                         res.data.forEach((note, i) => {
@@ -67,7 +67,7 @@ export default function Home() {
             <div className="cards">
                 {notes.length > 0 ? (
                     notes.map((note) => (
-                        (!note.deleted)?<NoteCard key={note._id} note={note} /> : null
+                        (!note.deleted && note.userId === userId)?<NoteCard key={note._id} note={note} /> : null
                     ))
                 ) : (
                     <Para>No Notes To Show</Para>

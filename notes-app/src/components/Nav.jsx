@@ -47,9 +47,6 @@ export default function Nav() {
         <Link to={'/'} ><H3>Notes</H3></Link>
       </NavItem>
       <NavItem>
-        <Link to={'/tags'} ><H3>Tags</H3></Link>
-      </NavItem>
-      <NavItem>
         <Link to={'/Profile'} ><H3>Profile</H3></Link>
       </NavItem>
       <Logo>
